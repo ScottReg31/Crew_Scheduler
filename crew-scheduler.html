@@ -230,6 +230,38 @@
     }
 }
 
+        /* Undo Button */
+        .undo-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .undo-btn:hover:not(:disabled) {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+        }
+
+        .undo-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .undo-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
         /* Main Layout */
         .main-container {
             display: flex;
@@ -1014,6 +1046,12 @@
             </svg>
             <span>Timeline</span>
         </a>
+            <button class="undo-btn" id="undoBtn" title="Undo" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 7v6h6"></path>
+                    <path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6.36 2.64L3 13"></path>
+                </svg>
+            </button>
             <div class="date-picker-group">
                 <label for="startDate">Week of:</label>
                 <input type="date" class="date-picker" id="startDate">
@@ -1131,6 +1169,10 @@
             // Search state
             let projectSearchQuery = '';
 
+            // Undo history (stores previous states)
+            let undoHistory = [];
+            const MAX_UNDO_HISTORY = 50;
+
             // DOM Elements
             const scheduleGrid = document.getElementById('scheduleGrid');
             const projectLibrary = document.getElementById('projectLibrary');
@@ -1159,6 +1201,7 @@
             const projectSearch = document.getElementById('projectSearch');
             const sortProjectsBtn = document.getElementById('sortProjectsBtn');
             const contextMenu = document.getElementById('contextMenu');
+            const undoBtn = document.getElementById('undoBtn');
 
             let modalMode = null;
             let editingItemId = null;
@@ -1208,7 +1251,39 @@
 
             // Data Persistence
             function saveData() {
+                // Save current localStorage state to undo history before overwriting
+                const oldSaved = localStorage.getItem('wicksSchedule');
+                if (oldSaved) {
+                    undoHistory.push(oldSaved);
+                    if (undoHistory.length > MAX_UNDO_HISTORY) {
+                        undoHistory.shift();
+                    }
+                    updateUndoButton();
+                }
                 localStorage.setItem('wicksSchedule', JSON.stringify(state));
+            }
+
+            function undo() {
+                if (undoHistory.length === 0) return;
+
+                const previousStateStr = undoHistory.pop();
+                localStorage.setItem('wicksSchedule', previousStateStr);
+
+                const parsed = JSON.parse(previousStateStr);
+                state = {
+                    ...state,
+                    ...parsed,
+                    startDate: new Date(parsed.startDate)
+                };
+                state.settings.sidebarWidth = state.settings.sidebarWidth || 220;
+
+                updateUndoButton();
+                render();
+                sidebar.style.width = state.settings.sidebarWidth + 'px';
+            }
+
+            function updateUndoButton() {
+                undoBtn.disabled = undoHistory.length === 0;
             }
 
             function loadData() {
@@ -2061,6 +2136,7 @@
                 themeToggle.addEventListener('click', toggleTheme);
                 startDatePicker.addEventListener('change', handleDateChange);
                 todayBtn.addEventListener('click', goToToday);
+                undoBtn.addEventListener('click', undo);
                 modalCancel.addEventListener('click', closeModal);
                 modalForm.addEventListener('submit', handleModalSubmit);
                 modalOverlay.addEventListener('click', (e) => {
