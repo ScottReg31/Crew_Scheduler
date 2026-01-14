@@ -401,6 +401,7 @@
             border: 1px solid var(--border);
             border-radius: 8px;
             min-width: fit-content;
+            grid-auto-rows: minmax(min-content, auto);
         }
 
         /* Grid Header */
@@ -598,6 +599,12 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             padding-right: 14px;
+        }
+
+        .schedule-cell .item-card-name {
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
         }
 
         .item-card-comment {
@@ -1492,7 +1499,11 @@
 
             // Cell card reorder handlers
             function handleCellCardDragOver(e) {
-                if (!cellReorderAssignmentId) return;
+                // If not a reorder, allow drop by calling preventDefault but let it bubble
+                if (!cellReorderAssignmentId) {
+                    e.preventDefault();
+                    return;
+                }
                 e.preventDefault();
                 e.stopPropagation();
                 e.currentTarget.classList.add('reorder-target');
@@ -1503,11 +1514,13 @@
             }
 
             function handleCellCardDrop(e) {
-                e.preventDefault();
-                e.stopPropagation();
                 e.currentTarget.classList.remove('reorder-target');
 
+                // If not a reorder operation, let event bubble to cell's handleDrop
                 if (!cellReorderAssignmentId) return;
+
+                e.preventDefault();
+                e.stopPropagation();
 
                 const targetId = e.currentTarget.dataset.assignmentId;
                 if (!targetId || targetId === cellReorderAssignmentId) return;
