@@ -98,6 +98,18 @@
             color: var(--text-primary);
         }
 
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo {
+            height: 36px;
+            width: auto;
+            object-fit: contain;
+        }
+
         .header-controls {
             display: flex;
             gap: 12px;
@@ -1034,7 +1046,10 @@
 </head>
 <body>
     <header class="header">
-        <h1>Wicks Construction</h1>
+        <div class="header-brand">
+            <img src="WicksLogo.png" alt="Wicks Construction Logo" class="header-logo">
+            <h1>Wicks Construction</h1>
+        </div>
         <div class="header-controls">
             <button class="mobile-menu-toggle" id="mobileMenuToggle">Menu</button>
             <a href="project-timeline.html" class="timeline-link" title="View Project Timeline">
