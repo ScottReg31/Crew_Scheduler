@@ -624,13 +624,19 @@
 
         .item-card.completed {
             opacity: 0.65;
-            background: #7a9d8a !important;
+        }
+
+        .item-card.completed .item-card-name {
+            text-decoration: line-through;
         }
 
         .item-card.completed .item-card-name::before {
             content: '✓ ';
             color: #22c55e;
-            font-weight: 700;
+            font-weight: 900;
+            font-size: 1.1em;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .item-card-name {
