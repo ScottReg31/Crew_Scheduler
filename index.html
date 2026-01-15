@@ -1243,6 +1243,9 @@
             // Context menu state
             let contextMenuAssignmentId = null;
 
+            // Assignment ID counter (int8 for Supabase)
+            let assignmentIdCounter = Date.now();
+
             // Utility Functions
             function generateId() {
                 return crypto.randomUUID();
@@ -1729,7 +1732,7 @@
                     case 'duplicate':
                         const newAssignment = {
                             ...assignment,
-                            id: generateId(),
+                            id: assignmentIdCounter++,
                             completed: false
                         };
                         state.assignments.push(newAssignment);
@@ -1966,7 +1969,7 @@
 
                     if (data.source === 'library') {
                         state.assignments.push({
-                            id: generateId(),
+                            id: assignmentIdCounter++,
                             itemId: data.itemId,
                             itemType: data.itemType,
                             foremanId: foremanId,
