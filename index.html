@@ -1243,10 +1243,6 @@
             // Context menu state
             let contextMenuAssignmentId = null;
 
-            // ID counters (int8 for Supabase)
-            let assignmentIdCounter = Date.now();
-            let noteIdCounter = Date.now() + 1;
-
             // Utility Functions
             function generateId() {
                 return crypto.randomUUID();
@@ -1726,7 +1722,7 @@
             // Context Menu Handlers
             function handleAssignmentContextMenu(e) {
                 e.preventDefault();
-                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
+                const assignmentId = e.currentTarget.dataset.assignmentId;
                 const assignment = state.assignments.find(a => a.id === assignmentId);
 
                 contextMenuAssignmentId = assignmentId;
@@ -1758,7 +1754,7 @@
                     case 'duplicate':
                         const newAssignment = {
                             ...assignment,
-                            id: assignmentIdCounter++,
+                            id: generateId(),
                             completed: false
                         };
                         state.assignments.push(newAssignment);
@@ -1812,7 +1808,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                const targetId = Number(e.currentTarget.dataset.assignmentId);
+                const targetId = e.currentTarget.dataset.assignmentId;
                 if (!targetId || targetId === cellReorderAssignmentId) return;
 
                 const draggedAssignment = state.assignments.find(a => a.id === cellReorderAssignmentId);
@@ -1953,7 +1949,7 @@
             function handleAssignmentDragStart(e) {
                 reorderDragType = null;
                 reorderDragId = null;
-                cellReorderAssignmentId = Number(e.target.dataset.assignmentId);
+                cellReorderAssignmentId = e.target.dataset.assignmentId;
 
                 e.target.classList.add('dragging');
                 e.dataTransfer.setData('application/json', JSON.stringify({
@@ -1999,7 +1995,7 @@
                         const item = items.find(i => String(i.id) === String(data.itemId));
                         if (item) {
                             state.assignments.push({
-                                id: assignmentIdCounter++,
+                                id: generateId(),
                                 itemId: item.id,  // Use actual ID from item (preserves type)
                                 itemType: data.itemType,
                                 foremanId: foremanId,
@@ -2069,7 +2065,7 @@
             function handleAssignmentCardClick(e) {
                 if (e.target.classList.contains('item-card-delete')) return;
 
-                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
+                const assignmentId = e.currentTarget.dataset.assignmentId;
                 const assignment = state.assignments.find(a => a.id === assignmentId);
 
                 if (assignment) {
@@ -2104,7 +2100,7 @@
 
             async function handleRemoveAssignment(e) {
                 e.stopPropagation();
-                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
+                const assignmentId = e.currentTarget.dataset.assignmentId;
                 await deleteAssignment(assignmentId);
                 state.assignments = state.assignments.filter(a => a.id !== assignmentId);
                 render();
@@ -2247,7 +2243,7 @@
                     await saveProjects();
                 } else if (modalMode === 'add-notes') {
                     state.notes.push({
-                        id: noteIdCounter++,
+                        id: generateId(),
                         name: name,
                         notes: modalNotes.value.trim() || null
                     });
