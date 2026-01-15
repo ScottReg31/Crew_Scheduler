@@ -1950,19 +1950,21 @@
             function handleAssignmentDragStart(e) {
                 reorderDragType = null;
                 reorderDragId = null;
-                cellReorderAssignmentId = e.target.dataset.assignmentId;
+                // Use currentTarget to always get the card element, not a child element
+                const card = e.currentTarget;
+                cellReorderAssignmentId = card.dataset.assignmentId;
 
-                e.target.classList.add('dragging');
+                card.classList.add('dragging');
                 e.dataTransfer.setData('application/json', JSON.stringify({
                     source: 'grid',
                     assignmentId: cellReorderAssignmentId,
-                    itemType: e.target.dataset.itemType
+                    itemType: card.dataset.itemType
                 }));
                 e.dataTransfer.effectAllowed = 'move';
             }
 
             function handleDragEnd(e) {
-                e.target.classList.remove('dragging');
+                e.currentTarget.classList.remove('dragging');
                 document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
                 document.querySelectorAll('.reorder-target').forEach(el => el.classList.remove('reorder-target'));
                 reorderDragType = null;
