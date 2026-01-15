@@ -1243,8 +1243,9 @@
             // Context menu state
             let contextMenuAssignmentId = null;
 
-            // Assignment ID counter (int8 for Supabase)
+            // ID counters (int8 for Supabase)
             let assignmentIdCounter = Date.now();
+            let noteIdCounter = Date.now() + 1;
 
             // Utility Functions
             function generateId() {
@@ -2250,7 +2251,7 @@
                     await saveProjects();
                 } else if (modalMode === 'add-notes') {
                     state.notes.push({
-                        id: generateId(),
+                        id: noteIdCounter++,
                         name: name,
                         notes: modalNotes.value.trim() || null
                     });
