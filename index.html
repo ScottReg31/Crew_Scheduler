@@ -1314,7 +1314,13 @@
 
                     state.foremen = foremenRes.data || [];
                     state.projects = projectsRes.data || [];
-                    state.notes = notesRes.data || [];
+
+                    // Transform snake_case to camelCase for notes
+                    state.notes = (notesRes.data || []).map(n => ({
+                        id: n.id,
+                        name: n.name,
+                        notes: n.note_text
+                    }));
 
                     // Transform snake_case to camelCase for assignments
                     state.assignments = (assignmentsRes.data || []).map(a => ({
@@ -1368,9 +1374,16 @@
             // Save notes to Supabase
             async function saveNotes() {
                 try {
+                    // Transform camelCase to snake_case for Supabase
+                    const notesForDb = state.notes.map(n => ({
+                        id: n.id,
+                        name: n.name,
+                        note_text: n.notes
+                    }));
+
                     const { error } = await supabase
                         .from('notes')
-                        .upsert(state.notes, { onConflict: 'id' });
+                        .upsert(notesForDb, { onConflict: 'id' });
 
                     if (error) throw error;
                     pushUndoState();
