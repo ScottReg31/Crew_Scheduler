@@ -1721,7 +1721,7 @@
             // Context Menu Handlers
             function handleAssignmentContextMenu(e) {
                 e.preventDefault();
-                const assignmentId = e.currentTarget.dataset.assignmentId;
+                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
                 const assignment = state.assignments.find(a => a.id === assignmentId);
 
                 contextMenuAssignmentId = assignmentId;
@@ -1807,7 +1807,7 @@
                 e.preventDefault();
                 e.stopPropagation();
 
-                const targetId = e.currentTarget.dataset.assignmentId;
+                const targetId = Number(e.currentTarget.dataset.assignmentId);
                 if (!targetId || targetId === cellReorderAssignmentId) return;
 
                 const draggedAssignment = state.assignments.find(a => a.id === cellReorderAssignmentId);
@@ -1948,12 +1948,12 @@
             function handleAssignmentDragStart(e) {
                 reorderDragType = null;
                 reorderDragId = null;
-                cellReorderAssignmentId = e.target.dataset.assignmentId;
+                cellReorderAssignmentId = Number(e.target.dataset.assignmentId);
 
                 e.target.classList.add('dragging');
                 e.dataTransfer.setData('application/json', JSON.stringify({
                     source: 'grid',
-                    assignmentId: e.target.dataset.assignmentId,
+                    assignmentId: cellReorderAssignmentId,
                     itemType: e.target.dataset.itemType
                 }));
                 e.dataTransfer.effectAllowed = 'move';
@@ -2059,7 +2059,7 @@
             function handleAssignmentCardClick(e) {
                 if (e.target.classList.contains('item-card-delete')) return;
 
-                const assignmentId = e.currentTarget.dataset.assignmentId;
+                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
                 const assignment = state.assignments.find(a => a.id === assignmentId);
 
                 if (assignment) {
@@ -2094,7 +2094,7 @@
 
             async function handleRemoveAssignment(e) {
                 e.stopPropagation();
-                const assignmentId = e.currentTarget.dataset.assignmentId;
+                const assignmentId = Number(e.currentTarget.dataset.assignmentId);
                 await deleteAssignment(assignmentId);
                 state.assignments = state.assignments.filter(a => a.id !== assignmentId);
                 render();
