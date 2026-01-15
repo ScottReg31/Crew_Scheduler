@@ -1846,7 +1846,7 @@
             function handleForemanReorderStart(e) {
                 e.stopPropagation();
                 reorderDragType = 'foreman';
-                reorderDragId = e.target.dataset.foremanId;
+                reorderDragId = e.currentTarget.dataset.foremanId;
                 e.dataTransfer.setData('text/plain', 'foreman-reorder');
                 e.dataTransfer.effectAllowed = 'move';
             }
@@ -1930,14 +1930,15 @@
 
             // Drag from library (creates copy OR reorder)
             function handleLibraryDragStart(e) {
-                const itemType = e.target.dataset.itemType;
-                const itemId = e.target.dataset.itemId;
+                const card = e.currentTarget;
+                const itemType = card.dataset.itemType;
+                const itemId = card.dataset.itemId;
 
                 reorderDragType = itemType;
                 reorderDragId = itemId;
                 cellReorderAssignmentId = null;
 
-                e.target.classList.add('dragging');
+                card.classList.add('dragging');
                 e.dataTransfer.setData('application/json', JSON.stringify({
                     source: 'library',
                     itemId: itemId,
