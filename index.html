@@ -1661,13 +1661,17 @@
 
             // Event Listeners
             function attachCellEventListeners() {
-                document.querySelectorAll('.schedule-cell').forEach(cell => {
+                const cells = document.querySelectorAll('.schedule-cell');
+                const cards = document.querySelectorAll('.schedule-cell .item-card');
+                console.log('attachCellEventListeners: Found', cells.length, 'cells and', cards.length, 'cards');
+
+                cells.forEach(cell => {
                     cell.addEventListener('dragover', handleDragOver);
                     cell.addEventListener('dragleave', handleDragLeave);
                     cell.addEventListener('drop', handleDrop);
                 });
 
-                document.querySelectorAll('.schedule-cell .item-card').forEach(card => {
+                cards.forEach(card => {
                     card.addEventListener('dragstart', handleAssignmentDragStart);
                     card.addEventListener('dragend', handleDragEnd);
                     card.addEventListener('click', handleAssignmentCardClick);
@@ -1948,11 +1952,13 @@
 
             // Drag from grid (moves assignment)
             function handleAssignmentDragStart(e) {
+                console.log('handleAssignmentDragStart called');
                 reorderDragType = null;
                 reorderDragId = null;
                 // Use currentTarget to always get the card element, not a child element
                 const card = e.currentTarget;
                 cellReorderAssignmentId = card.dataset.assignmentId;
+                console.log('Dragging assignment:', cellReorderAssignmentId);
 
                 card.classList.add('dragging');
                 e.dataTransfer.setData('application/json', JSON.stringify({
