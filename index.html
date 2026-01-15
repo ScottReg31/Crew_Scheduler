@@ -1805,9 +1805,6 @@
                 // If not a reorder operation, let event bubble to cell's handleDrop
                 if (!cellReorderAssignmentId) return;
 
-                e.preventDefault();
-                e.stopPropagation();
-
                 const targetId = e.currentTarget.dataset.assignmentId;
                 if (!targetId || targetId === cellReorderAssignmentId) return;
 
@@ -1816,9 +1813,13 @@
 
                 if (!draggedAssignment || !targetAssignment) return;
 
-                // Only reorder within same cell
+                // Only reorder within same cell - if different cells, let event bubble to handleDrop
                 if (draggedAssignment.foremanId !== targetAssignment.foremanId ||
                     draggedAssignment.weekKey !== targetAssignment.weekKey) return;
+
+                // Only stop propagation if we're actually handling a within-cell reorder
+                e.preventDefault();
+                e.stopPropagation();
 
                 const cellAssignments = state.assignments.filter(a =>
                     a.foremanId === draggedAssignment.foremanId &&
