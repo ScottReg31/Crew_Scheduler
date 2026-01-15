@@ -368,9 +368,20 @@
                     if (projectsRes.error) throw projectsRes.error;
                     if (assignmentsRes.error) throw assignmentsRes.error;
 
+                    // Transform snake_case to camelCase for assignments
+                    const assignments = (assignmentsRes.data || []).map(a => ({
+                        id: a.id,
+                        itemId: a.item_id,
+                        itemType: a.item_type,
+                        foremanId: a.foreman_id,
+                        weekKey: a.week_key,
+                        comment: a.comment,
+                        completed: a.completed
+                    }));
+
                     scheduleData = {
                         projects: projectsRes.data || [],
-                        assignments: assignmentsRes.data || []
+                        assignments: assignments
                     };
                     return scheduleData.projects.length > 0;
                 } catch (e) {
